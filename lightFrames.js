@@ -1,13 +1,24 @@
 import { drawToCanvas, createImageData } from "./tools.js";
-import {width,height, canvasWidth, canvasHeight, pixelWidth} from "./globals.js"
+import {width,height, canvasWidth, canvasHeight, pixelWidth,galaxyImage} from "./globals.js"
 let sampleCount = 10;
-
+    let displayRealImage = false;
     let displayAllSamples = false;
     let originalData = []
     let noiseSamples = []
     document.getElementById("sample-count").addEventListener("change", setSampleCount);
     document.getElementById("toggle-display").addEventListener("click", toggleSampleDisplay);
+    document.getElementById("toggle-real-image").addEventListener("click", toggleRealImage);
 
+    function toggleRealImage(){
+        console.log('here')
+        if(displayRealImage){
+            originalData=createImageData(100)
+        }else{
+            originalData = JSON.parse(JSON.stringify(galaxyImage))
+        }
+        displayRealImage = !displayRealImage
+        refresh()
+    }
     function refresh() {
         let original = document.getElementById("original-light");
         drawToCanvas(original, originalData);
@@ -43,7 +54,7 @@ let sampleCount = 10;
      * @return {void}
      */
     function createNoisyImage(imageData) {
-        let noiseFactor = 60
+        let noiseFactor = 80
         let noisy = JSON.parse(JSON.stringify(imageData))
         for (let x = 0; x < noisy.length; x++) {
             let pixel = noisy[x]

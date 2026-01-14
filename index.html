@@ -30,7 +30,7 @@
     <div>
         <label>Number of Samples</label>
         <input type="number" id="sample-count" name="sample-count" value="10" min="1" max="50" />
-        <button id="toggle-display">Toggle Sample Display</button>
+        <button id="toggle-display">Toggle Sample Display</button><button id="toggle-real-image">Toggle Real Photograph Example</button>
     </div>
     <div id="noise-container"></div>
     <h2>Flat Frames</h2>
@@ -46,9 +46,31 @@
             <canvas id="example-vignette"></canvas>
             <p>Distorted image</p>
         </div>
+        <div class="canvas-wrapper">
+            <canvas id="cleaned-vignette"></canvas>
+            <canvas id="galaxy"></canvas>
+            <!-- <img id="source" src="./test.jpg" width="100" height="100" /> -->
+        </div>
     </div>
 </body>
 <script type="module" src="lightFrames.js"></script>
 <script type="module" src="flatFrames.js"></script>
+<!-- <script>
+    let galaxy = document.getElementById("galaxy")
+    let gctx = galaxy.getContext("2d")
+    const image = document.getElementById("source");
+    image.addEventListener("load", (e) => {
+        gctx.drawImage(image, 0,0,100,100);
+        let data = gctx.getImageData(0,0,100,100).data
+        console.log(data)
+        let count = 0;
+        let final = []
+        let curr = []
+        for(let x = 0; x<data.length; x+=4){
+           final.push([data[x],data[x+1],data[x+2]])
+        }
+        console.log(final)
+    });
+</script> -->
 
 </html>

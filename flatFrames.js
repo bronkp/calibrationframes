@@ -1,5 +1,5 @@
 import { drawToCanvas, createImageData } from "./tools.js";
-import { width, height, canvasWidth, canvasHeight, pixelWidth } from "./globals.js"
+import { width, height, canvasWidth, canvasHeight, pixelWidth, galaxyImage} from "./globals.js"
 
 let originalData = []
 let distorted = []
@@ -34,6 +34,8 @@ function refresh() {
 
     let example = document.getElementById("example-vignette")
     drawToCanvas(example, distorted)
+    let galaxy = document.getElementById("galaxy")
+    drawToCanvas(galaxy,galaxyImage)
 }
 function initialize() {
     let original = document.getElementById("original-flat");
