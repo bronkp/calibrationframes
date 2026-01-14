@@ -82,6 +82,7 @@ canvas {
     width: min-content;
     height: min-content;
     border-radius: 1rem;
+    touch-action: none;
 }
 
 #noise-container {

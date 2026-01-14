@@ -102,29 +102,28 @@ function mouseDraw(canvas, imageData, x, y) {
 
 function initialize() {
     let original = document.getElementById("original-light");
-
-    original.addEventListener('mousedown', (e) => {
-        drawing = true
-        // Update the starting position to where the mouse was clicked
+    function startDraw(e) {
+        document.body.style.overflow = "hidden"
         const mousePos = getMousePos(original, e);
         let lastX = mousePos.x;
         let lastY = mousePos.y;
         mouseDraw(original, originalData, lastX, lastY)
+    }
+    original.addEventListener('pointerdown', (e) => {
+        drawing = true
+        startDraw(e)
     });
-    original.addEventListener('mousemove', (e) => {
+    original.addEventListener('pointermove', (e) => {
         if (drawing) {
-            const mousePos = getMousePos(original, e);
-            let lastX = mousePos.x;
-            let lastY = mousePos.y;
-            mouseDraw(original, originalData, lastX, lastY)
+            startDraw(e)
         }
     });
-    original.addEventListener('mouseup', (e)=>{
+    function stopDrawing() {
         drawing = false
-    })
-    original.addEventListener('mouseleave', (e)=>{
-        drawing = false
-    })
+    document.body.style.overflow = ""
+    }
+    original.addEventListener('pointerup', stopDrawing)
+    original.addEventListener('pointerleave', stopDrawing)
     originalData = createImageData(100);
     refresh()
 
