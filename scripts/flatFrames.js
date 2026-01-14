@@ -1,5 +1,5 @@
-import { drawToCanvas, createImageData, distortSample } from "./tools.js";
-import { width, height, canvasWidth, canvasHeight, pixelWidth, galaxyImage} from "./globals.js"
+import { drawToCanvas, createImageData, distortSample } from "../tools.js";
+import { width, height, canvasWidth, canvasHeight, pixelWidth, galaxyImage} from "../globals.js"
 
 let originalData = []
 let distorted = []
