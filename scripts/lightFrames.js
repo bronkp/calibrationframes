@@ -23,18 +23,21 @@ function toggleRealImage() {
 function refresh() {
     let original = document.getElementById("original-light");
     drawToCanvas(original, originalData);
-    noiseSamples = generateNoiseSamples(originalData)
-    if (displayAllSamples) {
-        addNoisyCanvases(noiseSamples)
+    if (!drawing || sampleCount<30) {
+        noiseSamples = generateNoiseSamples(originalData)
+        let example = document.getElementById("example-noise")
+        drawToCanvas(example, noiseSamples[0])
+        if (displayAllSamples) {
+            addNoisyCanvases(noiseSamples)
+        }
     }
-    let example = document.getElementById("example-noise")
-    drawToCanvas(example, noiseSamples[0])
     let averaged = document.getElementById("averaged");
     let averagedData = averageOutSamples(noiseSamples)
     drawToCanvas(averaged, averagedData)
 }
 function setSampleCount(e) {
-    let value = Math.min(50, Math.max(1, parseInt(e.target.value)))
+    console.log(e.target.value)
+    let value = e.target.value?Math.min(50, Math.max(1, parseInt(e.target.value))):1
     e.target.value = value.toString()
     sampleCount = value;
     refresh()
@@ -95,16 +98,14 @@ function mouseDraw(canvas, imageData, x, y) {
     if (col < width / pixelWidth && row < height / pixelWidth) {
 
         imageData[col + row * numOfCols] = [160, 100, 100]
-        noiseSamples = generateNoiseSamples(imageData)
-        if (displayAllSamples) {
-            addNoisyCanvases(noiseSamples)
-        }
         refresh()
     }
 }
 
 function initialize() {
     let original = document.getElementById("original-light");
+    let counter = document.getElementById("sample-count")
+    counter.value = sampleCount
     function startDraw(e) {
         document.body.style.overflow = "hidden"
         const mousePos = getMousePos(original, e);
@@ -124,6 +125,7 @@ function initialize() {
     function stopDrawing() {
         drawing = false
         document.body.style.overflow = ""
+        refresh()
     }
     original.addEventListener('pointerup', stopDrawing)
     original.addEventListener('pointerleave', stopDrawing)
