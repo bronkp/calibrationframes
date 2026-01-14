@@ -27,10 +27,13 @@
             <p>Image created by the average of noisy samples</p>
         </div>
     </div>
-    <button onclick="toggleSampleDisplay()">Display All Samples</button>
+    <label>Number of Samples</label>
+    <input type="number" id="sample-count" name="sample-count" value="10" min="1" max="50" />
+    <button onclick="toggleSampleDisplay()">Toggle Sample Display</button>
     <div id="noise-container"></div>
 </body>
 <script>
+    let sampleCount = 10;
     let canvasWidth = 400;
     let canvasHeight = 400;
     let width = 400;
@@ -39,13 +42,32 @@
     let displayAllSamples = false;
     let originalData = []
     let noiseSamples = []
+    document.getElementById("sample-count").addEventListener("change", setSampleCount);
+    function refresh() {
+
+        drawToCanvas(original, originalData);
+        noiseSamples = generateNoiseSamples(originalData)
+        if (displayAllSamples) {
+            addNoisyCanvases(noiseSamples)
+        }
+        let example = document.getElementById("example-noise")
+        drawToCanvas(example, noiseSamples[0])
+        let averaged = document.getElementById("averaged");
+        let averagedData = averageOutSamples(noiseSamples)
+        drawToCanvas(averaged, averagedData)
+    }
+    function setSampleCount(e) {
+        let value = Math.min(50, Math.max(1, parseInt(e.target.value)))
+        e.target.value = value.toString()
+        sampleCount = value;
+        refresh()
+    }
     function toggleSampleDisplay() {
         if (displayAllSamples) {
             let container = document.getElementById("noise-container")
             container.innerHTML = ""
         } else {
             addNoisyCanvases(noiseSamples)
-            console.log('here')
         }
         displayAllSamples = !displayAllSamples
     }
@@ -64,7 +86,7 @@
      * @return {void}
      */
     function createNoisyImage(imageData) {
-        let noiseFactor = 40
+        let noiseFactor = 60
         let noisy = JSON.parse(JSON.stringify(imageData))
         for (let x = 0; x < noisy.length; x++) {
             let pixel = noisy[x]
@@ -139,8 +161,7 @@
     }
     function generateNoiseSamples(imageData) {
         let samples = []
-        let count = 10
-        for (let x = 0; x < count; x++) {
+        for (let x = 0; x < sampleCount; x++) {
             samples.push(createNoisyImage(imageData))
         }
         return samples
@@ -183,16 +204,11 @@
         let row = Math.floor((y / canvasHeight) * (height / pixelWidth))
         let numOfCols = width / pixelWidth
         imageData[col + row * numOfCols] = [160, 100, 100]
-        drawToCanvas(canvas, imageData)
         noiseSamples = generateNoiseSamples(imageData)
         if (displayAllSamples) {
             addNoisyCanvases(noiseSamples)
         }
-        let averaged = document.getElementById("averaged");
-        let averagedData = averageOutSamples(noiseSamples)
-        drawToCanvas(averaged, averagedData)
-        let example = document.getElementById("example-noise")
-        drawToCanvas(example, noiseSamples[0])
+        refresh()
     }
 
     function initialize() {
@@ -207,13 +223,8 @@
             mouseDraw(original, originalData, lastX, lastY)
         });
         originalData = createImageData();
-        drawToCanvas(original, originalData);
-        noiseSamples = generateNoiseSamples(originalData)
-        let example = document.getElementById("example-noise")
-        drawToCanvas(example, noiseSamples[0])
-        let averaged = document.getElementById("averaged");
-        let averagedData = averageOutSamples(noiseSamples)
-        drawToCanvas(averaged, averagedData)
+        refresh()
+
     }
     initialize()
 </script>
