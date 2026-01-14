@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="container">
+        <canvas width="200" height="200" id="original"></canvas>
+        <canvas width="200" height="200" id="noisy"></canvas>
+    </div>
+</body>
+<script>
+    let width = 400;
+    let height = 400;
+    let pixelWidth = 4;
+
+    function createImageData() {
+        let image = []
+        let rows = height / pixelWidth;
+        let cols = width / pixelWidth;
+        for (let x = 0; x < rows * cols; x++) {
+            image.push([100, 100, 100]);
+        }
+        return image
+    }
+    /** 
+     * [creates a noisy version of an image]
+     * @param {number[][]} imageData [original pixel data to make a noisy version of]
+     * @return {void}
+     */
+    function createNoisyImage(imageData) {
+        let noiseFactor = 40
+        let noisy = JSON.parse(JSON.stringify(imageData))
+        for (let x = 0; x < noisy.length; x++) {
+            let pixel = noisy[x]
+            let nr = Math.random() * noiseFactor - noiseFactor / 2
+            let ng = Math.random() * noiseFactor - noiseFactor / 2
+            let nb = Math.random() * noiseFactor - noiseFactor / 2
+            pixel[0] = Math.min(Math.max(pixel[0] + nr, 0), 255)
+            pixel[1] = Math.min(Math.max(pixel[1] + ng, 0), 255)
+            pixel[2] = Math.min(Math.max(pixel[2] + nb, 0), 255)
+        }
+        return noisy
+    }
+    /** 
+     * [draws image to offscreen context]
+     * @param {ImageDataArray} originalData [image data array to be overwritten]
+     * @param {number[][]} newData [pixel data of image to be written]
+     * @return {void}
+     */
+    function drawImage(originalData, newData) {
+        let rows = height / pixelWidth;
+        let cols = width / pixelWidth;
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                let pixel = x + y * cols
+                let [r, g, b] = newData[pixel]
+                drawSquare(originalData, r, g, b, x, y)
+            }
+        }
+    }
+    /** 
+     * [draws square to image data array with given pixel size]
+     * @param {ImageDataArray} originalData [image data array to be overwritten]
+     * @param {number} r [red]
+     * @param {number} g [green]
+     * @param {number} b [blue]
+     * @param {number} originX [pixel's x, not accounting for size of pixel]
+     * @param {number} originY [pixel's y, not accounting for size of pixel]
+     * @return {void}
+     */
+    function drawSquare(data, r, g, b, originX, originY) {
+        let baseShift = originX * pixelWidth * 4 + originY * pixelWidth * 4 * width
+        for (let y = 0; y < pixelWidth; y++) {
+            for (let x = 0; x < pixelWidth; x++) {
+                let posShift = baseShift + x * 4 + y * 4 * width
+                data[posShift] = r
+                data[posShift + 1] = g
+                data[posShift + 2] = b
+                data[posShift + 3] = 255
+            }
+        }
+    }
+
+    function drawToCanvas(canvas, image) {
+        let ctx = canvas.getContext("2d")
+        let offscreenCanvas = document.createElement("canvas")
+        offscreenCanvas.width = width
+        offscreenCanvas.height = height
+        let offscreenCTX = offscreenCanvas.getContext("2d")
+        let imageData = offscreenCTX.createImageData(width, height)
+        let data = imageData.data
+        drawImage(data, image)
+        offscreenCTX.putImageData(imageData, 0, 0)
+        ctx.drawImage(offscreenCanvas, 0, 0)
+
+    }
+    function generateNoiseSamples(imageData) {
+        let samples = []
+        let count = 0
+        for (let x = 0; x < count; x++) {
+            samples.push(createNoisyImage(imageData))
+        }
+        return samples
+    }
+    function initialize() {
+        let original = document.getElementById("original");
+        let originalData = createImageData();
+        drawToCanvas(original, originalData);
+        let noisy = document.getElementById("noisy")
+        let noisyData = createNoisyImage(createImageData())
+        drawToCanvas(noisy, noisyData)
+    }
+    initialize()
+</script>
+
+</html>
