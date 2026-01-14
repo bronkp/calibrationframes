@@ -11,7 +11,6 @@ document.getElementById("toggle-display").addEventListener("click", toggleSample
 document.getElementById("toggle-real-image").addEventListener("click", toggleRealImage);
 
 function toggleRealImage() {
-    console.log('here')
     if (displayRealImage) {
         originalData = createImageData(100)
     } else {
@@ -36,7 +35,6 @@ function refresh() {
     drawToCanvas(averaged, averagedData)
 }
 function setSampleCount(e) {
-    console.log(e.target.value)
     let value = e.target.value?Math.min(50, Math.max(1, parseInt(e.target.value))):1
     e.target.value = value.toString()
     sampleCount = value;
