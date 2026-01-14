@@ -4,15 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Calibration Frames</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div id="container">
-        <canvas width="400" height="400" id="original"></canvas>
-        <canvas width="400" height="400" id="averaged"></canvas>
-        <div id="noise-container"></div>
+    <h1>Calibration Frames</h1>
+    <p>Calibration frames allow astrophotographers to correct for noise in their images</p>
+    <h2>Light Frames</h2>
+    <p>The most obvious method for correction is to take multiple photos and average out their data.</p>
+    <div class="collection" id="container">
+        <div class="canvas-wrapper">
+            <canvas id="original"></canvas>
+            <p>True Image</p>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="example-noise"></canvas>
+            <p>Example sample of image noise</p>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="averaged"></canvas>
+            <p>Image created by the average of noisy samples</p>
+        </div>
     </div>
+    <button onclick="toggleSampleDisplay()">Display All Samples</button>
+    <div id="noise-container"></div>
 </body>
 <script>
     let canvasWidth = 400;
@@ -20,7 +36,19 @@
     let width = 400;
     let height = 400;
     let pixelWidth = 4;
-
+    let displayAllSamples = false;
+    let originalData = []
+    let noiseSamples = []
+    function toggleSampleDisplay() {
+        if (displayAllSamples) {
+            let container = document.getElementById("noise-container")
+            container.innerHTML = ""
+        } else {
+            addNoisyCanvases(noiseSamples)
+            console.log('here')
+        }
+        displayAllSamples = !displayAllSamples
+    }
     function createImageData() {
         let image = []
         let rows = height / pixelWidth;
@@ -40,10 +68,10 @@
         let noisy = JSON.parse(JSON.stringify(imageData))
         for (let x = 0; x < noisy.length; x++) {
             let pixel = noisy[x]
-           
+
             //lets noise be + or -
             let nr = Math.random() * noiseFactor - noiseFactor / 2
-           
+
             let ng = Math.random() * noiseFactor - noiseFactor / 2
             let nb = Math.random() * noiseFactor - noiseFactor / 2
             pixel[0] = Math.min(Math.max(pixel[0] + nr, 0), 255)
@@ -93,6 +121,8 @@
     }
 
     function drawToCanvas(canvas, image) {
+        canvas.width = canvasWidth
+        canvas.height = canvasHeight
         let ctx = canvas.getContext("2d")
         ctx.width = width
         ctx.height = height
@@ -120,8 +150,6 @@
         container.innerHTML = ""
         samples.forEach(sample => {
             let newNoiseCanvas = document.createElement("canvas")
-            newNoiseCanvas.width = canvasWidth
-            newNoiseCanvas.height = canvasHeight
             drawToCanvas(newNoiseCanvas, sample)
             container.appendChild(newNoiseCanvas)
         });
@@ -151,39 +179,38 @@
         };
     }
     function mouseDraw(canvas, imageData, x, y) {
-        console.log(imageData, x / canvasWidth, width / pixelWidth)
         let col = Math.floor((x / canvasWidth) * (width / pixelWidth))
         let row = Math.floor((y / canvasHeight) * (height / pixelWidth))
         let numOfCols = width / pixelWidth
-        console.log(col, row, width / pixelWidth)
-
         imageData[col + row * numOfCols] = [160, 100, 100]
-        console.log(col + row * numOfCols)
         drawToCanvas(canvas, imageData)
-        let noise = generateNoiseSamples(imageData)
-        addNoisyCanvases(noise)
+        noiseSamples = generateNoiseSamples(imageData)
+        if (displayAllSamples) {
+            addNoisyCanvases(noiseSamples)
+        }
         let averaged = document.getElementById("averaged");
-        let averagedData = averageOutSamples(noise)
+        let averagedData = averageOutSamples(noiseSamples)
         drawToCanvas(averaged, averagedData)
-
+        let example = document.getElementById("example-noise")
+        drawToCanvas(example, noiseSamples[0])
     }
 
     function initialize() {
         let original = document.getElementById("original");
-        let originalData = createImageData();
+
         original.addEventListener('mousedown', (e) => {
             isDrawing = true;
             // Update the starting position to where the mouse was clicked
             const mousePos = getMousePos(original, e);
             lastX = mousePos.x;
             lastY = mousePos.y;
-            console.log(mousePos)
             mouseDraw(original, originalData, lastX, lastY)
         });
-
+        originalData = createImageData();
         drawToCanvas(original, originalData);
-        let noiseSamples = generateNoiseSamples(originalData)
-        addNoisyCanvases(noiseSamples)
+        noiseSamples = generateNoiseSamples(originalData)
+        let example = document.getElementById("example-noise")
+        drawToCanvas(example, noiseSamples[0])
         let averaged = document.getElementById("averaged");
         let averagedData = averageOutSamples(noiseSamples)
         drawToCanvas(averaged, averagedData)
