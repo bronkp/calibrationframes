@@ -9,13 +9,14 @@
 
 <body>
     <div id="container">
-        <canvas width="200" height="200" id="original"></canvas>
-        <canvas width="200" height="200" id="averaged"></canvas>
+        <canvas width="400" height="400" id="original"></canvas>
+        <canvas width="400" height="400" id="averaged"></canvas>
+        <div id="noise-container"></div>
     </div>
 </body>
 <script>
-    let canvasWidth = 200;
-    let canvasHeight = 200;
+    let canvasWidth = 400;
+    let canvasHeight = 400;
     let width = 400;
     let height = 400;
     let pixelWidth = 4;
@@ -90,6 +91,8 @@
 
     function drawToCanvas(canvas, image) {
         let ctx = canvas.getContext("2d")
+        ctx.width = width
+        ctx.height = height
         let offscreenCanvas = document.createElement("canvas")
         offscreenCanvas.width = width
         offscreenCanvas.height = height
@@ -109,13 +112,14 @@
         }
         return samples
     }
-    function addNoisyCanvases(samples, container) {
+    function addNoisyCanvases(samples) {
+        let container = document.getElementById("noise-container")
+        container.innerHTML = ""
         samples.forEach(sample => {
             let newNoiseCanvas = document.createElement("canvas")
             newNoiseCanvas.width = canvasWidth
             newNoiseCanvas.height = canvasHeight
-            let noisyData = createNoisyImage(createImageData())
-            drawToCanvas(newNoiseCanvas, noisyData)
+            drawToCanvas(newNoiseCanvas, sample)
             container.appendChild(newNoiseCanvas)
         });
     }
@@ -136,16 +140,50 @@
         }
         return averaged
     }
+    function getMousePos(canvas, evt) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
+    }
+    function mouseDraw(canvas, imageData, x, y) {
+        console.log(imageData, x / canvasWidth, width / pixelWidth)
+        let col = Math.floor((x / canvasWidth) * (width / pixelWidth))
+        let row = Math.floor((y / canvasHeight) * (height / pixelWidth))
+        let numOfCols = width / pixelWidth
+        console.log(col, row, width / pixelWidth)
+
+        imageData[col + row * numOfCols] = [160, 100, 100]
+        console.log(col + row * numOfCols)
+        drawToCanvas(canvas, imageData)
+        let noise = generateNoiseSamples(imageData)
+        addNoisyCanvases(noise)
+        let averaged = document.getElementById("averaged");
+        let averagedData = averageOutSamples(noise)
+        drawToCanvas(averaged, averagedData)
+
+    }
+
     function initialize() {
         let original = document.getElementById("original");
         let originalData = createImageData();
+        original.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            // Update the starting position to where the mouse was clicked
+            const mousePos = getMousePos(original, e);
+            lastX = mousePos.x;
+            lastY = mousePos.y;
+            console.log(mousePos)
+            mouseDraw(original, originalData, lastX, lastY)
+        });
+
         drawToCanvas(original, originalData);
-        let container = document.getElementById("container")
-        let noiseSamples = generateNoiseSamples(createImageData())
-        addNoisyCanvases(noiseSamples, container)
+        let noiseSamples = generateNoiseSamples(originalData)
+        addNoisyCanvases(noiseSamples)
         let averaged = document.getElementById("averaged");
         let averagedData = averageOutSamples(noiseSamples)
-        drawToCanvas(averaged,averagedData)
+        drawToCanvas(averaged, averagedData)
     }
     initialize()
 </script>
