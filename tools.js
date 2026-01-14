@@ -6,7 +6,7 @@ import { width, height, canvasWidth, canvasHeight, pixelWidth } from "./globals.
  * @param {number[][]} newData [pixel data of image to be written]
  * @return {void}
  */
-export function drawImage(originalData, newData) {
+function drawImage(originalData, newData) {
     let rows = height / pixelWidth;
     let cols = width / pixelWidth;
     for (let y = 0; y < rows; y++) {
@@ -40,3 +40,28 @@ function drawSquare(data, r, g, b, originX, originY) {
         }
     }
 }
+export function createImageData(val) {
+        let image = []
+        let rows = height / pixelWidth;
+        let cols = width / pixelWidth;
+        for (let x = 0; x < rows * cols; x++) {
+            image.push([val,val,val]);
+        }
+        return image
+    }
+export function drawToCanvas(canvas, image) {
+        canvas.width = canvasWidth
+        canvas.height = canvasHeight
+        let ctx = canvas.getContext("2d")
+        ctx.width = width
+        ctx.height = height
+        let offscreenCanvas = document.createElement("canvas")
+        offscreenCanvas.width = width
+        offscreenCanvas.height = height
+        let offscreenCTX = offscreenCanvas.getContext("2d")
+        let imageData = offscreenCTX.createImageData(width, height)
+        let data = imageData.data
+        drawImage(data, image)
+        offscreenCTX.putImageData(imageData, 0, 0)
+        ctx.drawImage(offscreenCanvas, 0, 0)
+    }

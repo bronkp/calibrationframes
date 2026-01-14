@@ -15,7 +15,7 @@
     <p>The most obvious method for correction is to take multiple photos and average out their data.</p>
     <div class="collection" id="container">
         <div class="canvas-wrapper">
-            <canvas id="original"></canvas>
+            <canvas id="original-light"></canvas>
             <p>True Image</p>
         </div>
         <div class="canvas-wrapper">
@@ -33,7 +33,22 @@
         <button id="toggle-display">Toggle Sample Display</button>
     </div>
     <div id="noise-container"></div>
+    <h2>Flat Frames</h2>
+    <p>While averaging can help correct noise, some errors, like vignetting, will be consistent across samples. To
+        correct for this, a capture is taken of what should be a consistently illuminated image. Doing this we can find
+        what errors the system contains and correct for them. </p>
+    <div class="collection" id="container">
+        <div class="canvas-wrapper">
+            <canvas id="original-flat"></canvas>
+            <p>True Image</p>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="example-vignette"></canvas>
+            <p>Distorted image</p>
+        </div>
+    </div>
 </body>
-<script type="module" src="script.js"></script>
+<script type="module" src="lightFrames.js"></script>
+<script type="module" src="flatFrames.js"></script>
 
 </html>

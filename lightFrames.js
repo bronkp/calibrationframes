@@ -1,4 +1,4 @@
-import { drawImage } from "./tools.js";
+import { drawToCanvas, createImageData } from "./tools.js";
 import {width,height, canvasWidth, canvasHeight, pixelWidth} from "./globals.js"
 let sampleCount = 10;
 
@@ -9,7 +9,7 @@ let sampleCount = 10;
     document.getElementById("toggle-display").addEventListener("click", toggleSampleDisplay);
 
     function refresh() {
-
+        let original = document.getElementById("original-light");
         drawToCanvas(original, originalData);
         noiseSamples = generateNoiseSamples(originalData)
         if (displayAllSamples) {
@@ -36,15 +36,7 @@ let sampleCount = 10;
         }
         displayAllSamples = !displayAllSamples
     }
-    function createImageData() {
-        let image = []
-        let rows = height / pixelWidth;
-        let cols = width / pixelWidth;
-        for (let x = 0; x < rows * cols; x++) {
-            image.push([100, 100, 100]);
-        }
-        return image
-    }
+
     /** 
      * [creates a noisy version of an image]
      * @param {number[][]} imageData [original pixel data to make a noisy version of]
@@ -67,23 +59,7 @@ let sampleCount = 10;
         }
         return noisy
     }
-    function drawToCanvas(canvas, image) {
-        canvas.width = canvasWidth
-        canvas.height = canvasHeight
-        let ctx = canvas.getContext("2d")
-        ctx.width = width
-        ctx.height = height
-        let offscreenCanvas = document.createElement("canvas")
-        offscreenCanvas.width = width
-        offscreenCanvas.height = height
-        let offscreenCTX = offscreenCanvas.getContext("2d")
-        let imageData = offscreenCTX.createImageData(width, height)
-        let data = imageData.data
-        drawImage(data, image)
-        offscreenCTX.putImageData(imageData, 0, 0)
-        ctx.drawImage(offscreenCanvas, 0, 0)
 
-    }
     function generateNoiseSamples(imageData) {
         let samples = []
         for (let x = 0; x < sampleCount; x++) {
@@ -137,7 +113,7 @@ let sampleCount = 10;
     }
 
     function initialize() {
-        let original = document.getElementById("original");
+        let original = document.getElementById("original-light");
 
         original.addEventListener('mousedown', (e) => {
             // Update the starting position to where the mouse was clicked
@@ -146,7 +122,7 @@ let sampleCount = 10;
             let lastY = mousePos.y;
             mouseDraw(original, originalData, lastX, lastY)
         });
-        originalData = createImageData();
+        originalData = createImageData(100);
         refresh()
 
     }
