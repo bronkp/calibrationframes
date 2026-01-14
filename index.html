@@ -9,13 +9,17 @@
 </head>
 
 <body>
+    <div class="content">
+
+   
     <h1>Calibration Frames</h1>
-    <p>Calibration frames allow astrophotographers to correct for noise in their images</p>
+    <p>Calibration frames allow astrophotographers to create more accurate photos by reducing noise and optical effects</p>
     <h2>Light Frames</h2>
-    <p>The most obvious method for correction is to take multiple photos and average out their data.</p>
+    <p>One method for reducing natural noise in a photo is by taking many photos and averaging their results</p>
     <div class="collection" id="container">
         <div class="canvas-wrapper">
             <canvas id="original-light"></canvas>
+            <p style="position: absolute; bottom:3rem; color:white">Click on image to draw</p>
             <p>True Image</p>
         </div>
         <div class="canvas-wrapper">
@@ -26,15 +30,21 @@
             <canvas id="averaged"></canvas>
             <p>Image created by the average of noisy samples</p>
         </div>
-    </div>
-    <div>
-        <label>Number of Samples</label>
-        <input type="number" id="sample-count" name="sample-count" value="10" min="1" max="50" />
-        <button id="toggle-display">Toggle Sample Display</button>
-        <button id="toggle-real-image">Toggle Real Photograph Example</button>
+       
+        <div class="break inputs">
+            <div class="sample-input">
+                <div style="width:12.6rem">
+                    <p>Number of samples:</p>
+                    <p style="font-size:medium;">(may lag at larger count)</p>
+                </div>
+                <input type="number" id="sample-count" name="sample-count" value="10" min="1" max="50" />
+            </div>
+            <button id="toggle-display">Toggle Sample Display</button>
+            <button id="toggle-real-image">Toggle Real Photograph Example</button>
+        </div>
     </div>
     <div id="noise-container"></div>
-    <h2>Flat Frames</h2>
+    <!-- <h2>Flat Frames</h2>
     <p>While averaging can help correct noise, some errors, like vignetting, will be consistent across samples. To
         correct for this, a capture is taken of what should be a consistently illuminated image. Doing this we can find
         what errors the system contains and correct for them. </p>
@@ -48,9 +58,9 @@
             <p>Distorted image</p>
         </div>
         <div class="canvas-wrapper">
-            <canvas id="cleaned-vignette"></canvas>
-            <!-- <img id="source" src="./test2.png" width="100" height="100" /> -->
-        </div>
+            <canvas id="cleaned-vignette"></canvas> -->
+    <!-- <img id="source" src="./test2.png" width="100" height="100" /> -->
+    <!-- </div>
     </div>
     <div class="collection" id="container">
         <div class="canvas-wrapper">
@@ -65,8 +75,8 @@
     </div>
     <button id="toggle-demo-raw">Toggle Sample Display</button>
 
-    <div id="demo-raw-samples"></div>
-
+    <div id="demo-raw-samples"></div> -->
+</div>  
 </body>
 <script type="module" src="lightFrames.js"></script>
 <script type="module" src="flatFrames.js"></script>
