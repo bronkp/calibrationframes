@@ -10,7 +10,7 @@
 <body>
     <div id="container">
         <canvas width="200" height="200" id="original"></canvas>
-        <canvas width="200" height="200" id="noisy"></canvas>
+        <canvas width="200" height="200" id="averaged"></canvas>
     </div>
 </body>
 <script>
@@ -119,13 +119,33 @@
             container.appendChild(newNoiseCanvas)
         });
     }
+    function averageOutSamples(samples) {
+        let averaged = []
+        let numberOfSamples = samples.length
+        for (let x = 0; x < samples[0].length; x++) {
+            let rs = 0
+            let gs = 0
+            let bs = 0
+            samples.forEach(sample => {
+                let [r, g, b, a] = sample[x]
+                rs += r
+                gs += g
+                bs += b
+            })
+            averaged.push([rs / numberOfSamples, gs / numberOfSamples, bs / numberOfSamples, 255])
+        }
+        return averaged
+    }
     function initialize() {
         let original = document.getElementById("original");
         let originalData = createImageData();
         drawToCanvas(original, originalData);
         let container = document.getElementById("container")
-        addNoisyCanvases(generateNoiseSamples(createImageData()),container)
-
+        let noiseSamples = generateNoiseSamples(createImageData())
+        addNoisyCanvases(noiseSamples, container)
+        let averaged = document.getElementById("averaged");
+        let averagedData = averageOutSamples(noiseSamples)
+        drawToCanvas(averaged,averagedData)
     }
     initialize()
 </script>
