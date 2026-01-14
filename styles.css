@@ -28,13 +28,15 @@ body {
     display: flex;
     width: 80%;
     min-width: min-content;
+    max-width: 100vw;
     height: min-content;
     min-height: 50rem;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
     margin:1rem;
-    padding:1rem;
+    padding-top:1rem;
+    padding-bottom: 1rem;
 }
 .break{
     flex-basis: 100%;
