@@ -40,7 +40,10 @@
         let noisy = JSON.parse(JSON.stringify(imageData))
         for (let x = 0; x < noisy.length; x++) {
             let pixel = noisy[x]
+           
+            //lets noise be + or -
             let nr = Math.random() * noiseFactor - noiseFactor / 2
+           
             let ng = Math.random() * noiseFactor - noiseFactor / 2
             let nb = Math.random() * noiseFactor - noiseFactor / 2
             pixel[0] = Math.min(Math.max(pixel[0] + nr, 0), 255)
