@@ -92,12 +92,15 @@ function mouseDraw(canvas, imageData, x, y) {
     let col = Math.floor((x / canvasWidth) * (width / pixelWidth))
     let row = Math.floor((y / canvasHeight) * (height / pixelWidth))
     let numOfCols = width / pixelWidth
-    imageData[col + row * numOfCols] = [160, 100, 100]
-    noiseSamples = generateNoiseSamples(imageData)
-    if (displayAllSamples) {
-        addNoisyCanvases(noiseSamples)
+    if (col < width / pixelWidth && row < height / pixelWidth) {
+
+        imageData[col + row * numOfCols] = [160, 100, 100]
+        noiseSamples = generateNoiseSamples(imageData)
+        if (displayAllSamples) {
+            addNoisyCanvases(noiseSamples)
+        }
+        refresh()
     }
-    refresh()
 }
 
 function initialize() {
@@ -120,7 +123,7 @@ function initialize() {
     });
     function stopDrawing() {
         drawing = false
-    document.body.style.overflow = ""
+        document.body.style.overflow = ""
     }
     original.addEventListener('pointerup', stopDrawing)
     original.addEventListener('pointerleave', stopDrawing)
