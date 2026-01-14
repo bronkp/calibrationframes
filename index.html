@@ -14,6 +14,8 @@
     </div>
 </body>
 <script>
+    let canvasWidth = 200;
+    let canvasHeight = 200;
     let width = 400;
     let height = 400;
     let pixelWidth = 4;
@@ -101,19 +103,29 @@
     }
     function generateNoiseSamples(imageData) {
         let samples = []
-        let count = 0
+        let count = 10
         for (let x = 0; x < count; x++) {
             samples.push(createNoisyImage(imageData))
         }
         return samples
     }
+    function addNoisyCanvases(samples, container) {
+        samples.forEach(sample => {
+            let newNoiseCanvas = document.createElement("canvas")
+            newNoiseCanvas.width = canvasWidth
+            newNoiseCanvas.height = canvasHeight
+            let noisyData = createNoisyImage(createImageData())
+            drawToCanvas(newNoiseCanvas, noisyData)
+            container.appendChild(newNoiseCanvas)
+        });
+    }
     function initialize() {
         let original = document.getElementById("original");
         let originalData = createImageData();
         drawToCanvas(original, originalData);
-        let noisy = document.getElementById("noisy")
-        let noisyData = createNoisyImage(createImageData())
-        drawToCanvas(noisy, noisyData)
+        let container = document.getElementById("container")
+        addNoisyCanvases(generateNoiseSamples(createImageData()),container)
+
     }
     initialize()
 </script>
