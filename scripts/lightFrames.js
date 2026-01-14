@@ -22,7 +22,7 @@ function toggleRealImage() {
 function refresh() {
     let original = document.getElementById("original-light");
     drawToCanvas(original, originalData);
-    if (!drawing || sampleCount<30) {
+    if (!drawing || sampleCount < 30) {
         noiseSamples = generateNoiseSamples(originalData)
         let example = document.getElementById("example-noise")
         drawToCanvas(example, noiseSamples[0])
@@ -35,7 +35,7 @@ function refresh() {
     drawToCanvas(averaged, averagedData)
 }
 function setSampleCount(e) {
-    let value = e.target.value?Math.min(50, Math.max(1, parseInt(e.target.value))):1
+    let value = e.target.value ? Math.min(50, Math.max(1, parseInt(e.target.value))) : 1
     e.target.value = value.toString()
     sampleCount = value;
     refresh()
@@ -121,9 +121,11 @@ function initialize() {
         }
     });
     function stopDrawing() {
-        drawing = false
-        document.body.style.overflow = ""
-        refresh()
+        if (drawing) {
+            drawing = false
+            document.body.style.overflow = ""
+            refresh()
+        }
     }
     original.addEventListener('pointerup', stopDrawing)
     original.addEventListener('pointerleave', stopDrawing)
