@@ -1,4 +1,4 @@
-import { drawToCanvas, createImageData } from "./tools.js";
+import { drawToCanvas, createImageData, createNoisyImage } from "./tools.js";
 import {width,height, canvasWidth, canvasHeight, pixelWidth,galaxyImage} from "./globals.js"
 let sampleCount = 10;
     let displayRealImage = false;
@@ -47,30 +47,6 @@ let sampleCount = 10;
         }
         displayAllSamples = !displayAllSamples
     }
-
-    /** 
-     * [creates a noisy version of an image]
-     * @param {number[][]} imageData [original pixel data to make a noisy version of]
-     * @return {void}
-     */
-    function createNoisyImage(imageData) {
-        let noiseFactor = 80
-        let noisy = JSON.parse(JSON.stringify(imageData))
-        for (let x = 0; x < noisy.length; x++) {
-            let pixel = noisy[x]
-
-            //lets noise be + or -
-            let nr = Math.random() * noiseFactor - noiseFactor / 2
-
-            let ng = Math.random() * noiseFactor - noiseFactor / 2
-            let nb = Math.random() * noiseFactor - noiseFactor / 2
-            pixel[0] = Math.min(Math.max(pixel[0] + nr, 0), 255)
-            pixel[1] = Math.min(Math.max(pixel[1] + ng, 0), 255)
-            pixel[2] = Math.min(Math.max(pixel[2] + nb, 0), 255)
-        }
-        return noisy
-    }
-
     function generateNoiseSamples(imageData) {
         let samples = []
         for (let x = 0; x < sampleCount; x++) {
